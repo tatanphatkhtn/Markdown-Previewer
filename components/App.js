@@ -4,7 +4,25 @@
 const React = require('react');
 let TextArea = require('./TextArea');
 let Previewer = require('./Previewer');
-let marked = require('marked')
+let marked = require('marked');
+let processString = {
+   entityMap : {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+    '/': '&#x2F;',
+    '`': '&#x60;',
+    '=': '&#x3D;'
+  },
+  escapeHtml :(string) => {
+  return String(string).replace(/[&<>"'`=\/]/g, function fromEntityMap (s) {
+    return processString.entityMap[s];
+  });
+}
+
+};
 class App extends React.Component {
     constructor() {
       super();
@@ -14,7 +32,9 @@ class App extends React.Component {
       this.changeText = this.changeText.bind(this);
     }
     changeText(value) {
-      this.setState({text:marked(value)});
+      let escapeValue = processString.escapeHtml(value);
+      console.log(escapeValue);
+      this.setState({text:marked(escapeValue)});
     }
     render() {
       return(
